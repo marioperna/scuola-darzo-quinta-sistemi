@@ -172,9 +172,31 @@ else
     BLOCCO="ATTENZIONE: blocco di rete NON attivo, avvisa il docente"
 fi
 
+# --- 13. Apertura automatica del nuovo terminale -------------------
+# Il nuovo terminale legge il .bashrc appena modificato, quindi registra i comandi.
+# Parte staccato da questo script: resta aperto anche se si chiude il vecchio.
+AVVIO='clear; echo "============================================================"; echo " Terminale della verifica pronto."; echo " Da qui in poi i comandi vengono registrati."; echo " Puoi chiudere il terminale precedente."; echo "============================================================"; echo; cd ~; exec bash -i'
+APERTO=0
+if [ -n "$DISPLAY$WAYLAND_DISPLAY" ]; then
+    for t in gnome-terminal ptyxis xterm x-terminal-emulator; do
+        command -v $t > /dev/null || continue
+        case $t in
+            gnome-terminal|ptyxis) setsid nohup $t -- bash -c "$AVVIO" > /dev/null 2>&1 & ;;
+            *)                     setsid nohup $t -e bash -c "$AVVIO" > /dev/null 2>&1 & ;;
+        esac
+        APERTO=1
+        break
+    done
+fi
+
 echo ""
 echo "============================================================"
 echo " Ambiente pronto.  ($BLOCCO)"
-echo " ORA CHIUDI QUESTO TERMINALE E APRINE UNO NUOVO (Ctrl+Alt+T)."
+if [ $APERTO -eq 1 ]; then
+    echo " Si sta aprendo un NUOVO TERMINALE: usa quello per la prova."
+    echo " Puoi chiudere questo."
+else
+    echo " ORA CHIUDI QUESTO TERMINALE E APRINE UNO NUOVO (Ctrl+Alt+T)."
+fi
 echo " I comandi digitati in QUESTO terminale non vengono registrati."
 echo "============================================================"
