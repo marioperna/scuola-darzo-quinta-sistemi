@@ -110,16 +110,6 @@ echo "Manuale della stampante" > "$BASE/condivisa/manuali/stampante.txt"
 echo "Manuale del centralino" > "$BASE/condivisa/manuali/centralino.txt"
 head -c 3M /dev/urandom > "$BASE/condivisa/video/presentazione.mp4"
 
-# --- 8. Rapporto da compilare ---------------------------------
-RAPPORTO="$BASE/rapporto.txt"
-echo "RAPPORTO DEL SISTEMISTA - NovaTech S.r.l." > "$RAPPORTO"
-echo "Cognome e nome: " >> "$RAPPORTO"
-echo "Classe: " >> "$RAPPORTO"
-echo "" >> "$RAPPORTO"
-for i in $(seq 1 16); do
-    echo "R$i: " >> "$RAPPORTO"
-done
-
 # --- 9. Utente e gruppo gia' presenti sul server --------------
 sudo useradd -m -s /bin/bash -c "Giorgio Verdi" gverdi
 echo "gverdi:Novatech2025" | sudo chpasswd
