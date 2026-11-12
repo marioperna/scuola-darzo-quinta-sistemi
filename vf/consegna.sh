@@ -1,7 +1,7 @@
 #!/bin/bash
 # ------------------------------------------------------------
 # consegna.sh - Salva il lavoro svolto nella verifica "Comandi Linux"
-# Uso:  bash consegna.sh      (NON usare sudo)
+# Uso:  history -a ; bash consegna.sh      (NON usare sudo)
 # Crea nella home il file consegna_COGNOME_NOME.tar.gz che contiene:
 #   - comandi.txt   tutti i comandi digitati al terminale, con l'ora
 #   - rapporto.txt  le risposte scritte dallo studente
@@ -11,6 +11,17 @@
 # ------------------------------------------------------------
 
 BASE="$HOME/novatech"
+
+# Controllo preliminare: ci sono comandi registrati?
+NCOMANDI=$(grep -vc '^#' "$HOME/.bash_history" 2>/dev/null)
+if [ "${NCOMANDI:-0}" -lt 3 ]; then
+    echo "ATTENZIONE: nella cronologia ci sono solo ${NCOMANDI:-0} comandi."
+    echo "Forse stai usando il terminale in cui hai lanciato setup.sh, oppure i"
+    echo "comandi non sono ancora stati salvati. Digita:   history -a"
+    echo "poi rilancia:   bash consegna.sh"
+    read -p "Vuoi continuare comunque? (s/N) " risp
+    [ "$risp" = "s" ] || exit 1
+fi
 
 read -p "Cognome: " cognome
 read -p "Nome: " nome
