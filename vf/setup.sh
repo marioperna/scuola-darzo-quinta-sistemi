@@ -138,14 +138,18 @@ setsid nohup /tmp/fantasma.sh > /dev/null 2>&1 &
 
 # --- 11. Registrazione dei comandi digitati -------------------
 # Ogni comando viene salvato subito in ~/.bash_history, con data e ora.
-if ! grep -q "VERIFICA-NOVATECH" "$HOME/.bashrc" 2>/dev/null; then
-    echo '# VERIFICA-NOVATECH: salvataggio immediato dei comandi' >> "$HOME/.bashrc"
-    echo 'HISTSIZE=5000' >> "$HOME/.bashrc"
-    echo 'HISTFILESIZE=5000' >> "$HOME/.bashrc"
-    echo 'HISTCONTROL=' >> "$HOME/.bashrc"
-    echo 'HISTTIMEFORMAT="%H:%M:%S  "' >> "$HOME/.bashrc"
-    echo 'PROMPT_COMMAND="history -a"' >> "$HOME/.bashrc"
+# Se esiste un blocco di una versione precedente lo toglie (e' sempre in fondo al file).
+if grep -q "VERIFICA-NOVATECH" "$HOME/.bashrc" 2>/dev/null; then
+    sed -i '/VERIFICA-NOVATECH/,$d' "$HOME/.bashrc"
 fi
+echo '# VERIFICA-NOVATECH: salvataggio immediato dei comandi' >> "$HOME/.bashrc"
+echo 'export HISTFILE="$HOME/.bash_history"' >> "$HOME/.bashrc"
+echo 'shopt -s histappend' >> "$HOME/.bashrc"
+echo 'HISTSIZE=5000' >> "$HOME/.bashrc"
+echo 'HISTFILESIZE=5000' >> "$HOME/.bashrc"
+echo 'HISTCONTROL=' >> "$HOME/.bashrc"
+echo 'HISTTIMEFORMAT="%H:%M:%S  "' >> "$HOME/.bashrc"
+echo 'PROMPT_COMMAND="history -a${PROMPT_COMMAND:+; $PROMPT_COMMAND}"' >> "$HOME/.bashrc"
 : > "$HOME/.bash_history"
 date "+%Y-%m-%d %H:%M:%S" > "$BASE/.inizio_prova"
 
@@ -172,4 +176,5 @@ echo ""
 echo "============================================================"
 echo " Ambiente pronto.  ($BLOCCO)"
 echo " ORA CHIUDI QUESTO TERMINALE E APRINE UNO NUOVO (Ctrl+Alt+T)."
+echo " I comandi digitati in QUESTO terminale non vengono registrati."
 echo "============================================================"
